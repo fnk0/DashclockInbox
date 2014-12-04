@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Inbox Dashclock</string>
+
+
+    <string name="inbox_extension_title">Inbox</string>
+    <string name="inbox_extension_description">
+        Displays an unread count for your Inbox emails.
+    </string>
+    <string name="title_inbox_settings">Inbox Extension Settings</string>
+    <plurals name="inbox_title_template">
+        <item quantity="other">%1$d unread</item>
+    </plurals>
+
+    <string name="pref_gmail_label_title">Show unread count for label</string>
+    <string-array name="pref_gmail_label_display_names">
+        <item>Inbox</item>
+        <item>Priority Inbox</item>
+    </string-array>
+    <string-array name="pref_gmail_label_inbox_values" translatable="false">
+        <item>i</item>
+        <item>p</item>
+    </string-array>
+
+    <string name="pref_inbox_accounts_title">Show unread count for accounts</string>
+    <plurals name="pref_inbox_accounts_summary_template">
+        <item quantity="one">%1$d of %2$d account selected</item>
+        <item quantity="other">%1$d of %2$d accounts selected</item>
+    </plurals>
+</resources>
