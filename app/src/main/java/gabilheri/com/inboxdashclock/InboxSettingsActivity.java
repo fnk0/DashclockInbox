@@ -17,6 +17,8 @@
 package gabilheri.com.inboxdashclock;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
@@ -25,12 +27,14 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InboxSettingsActivity extends ActionBarActivity {
+public class InboxSettingsActivity extends ActionBarActivity implements View.OnClickListener{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -54,6 +58,42 @@ public class InboxSettingsActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        ImageView devGPlus = (ImageView) findViewById(R.id.dev_gplus);
+        ImageView devGit = (ImageView) findViewById(R.id.dev_git);
+        ImageView devIn = (ImageView) findViewById(R.id.dev_in);
+        ImageView devWeb = (ImageView) findViewById(R.id.dev_web);
+        devGPlus.setOnClickListener(this);
+        devGit.setOnClickListener(this);
+        devIn.setOnClickListener(this);
+        devWeb.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        String url = "";
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        switch (v.getId()) {
+
+            case R.id.dev_gplus:
+                url = "https://plus.google.com/u/0/+MarcusViniciusAndreoGabilheri";
+                break;
+            case R.id.dev_git:
+                url = "https://github.com/fnk0";
+                break;
+            case R.id.dev_in:
+                url = "http://www.linkedin.com/in/marcusgabilheri/";
+                break;
+
+            case R.id.dev_web:
+                url = "http://www.gabilheri.com/";
+                break;
+        }
+
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 
     public static class SettingsFragment extends PreferenceFragment {

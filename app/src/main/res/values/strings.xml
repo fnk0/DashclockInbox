@@ -22,6 +22,8 @@
     </string-array>
 
     <string name="pref_inbox_accounts_title">Show unread count for accounts</string>
+    <string name="dev_name">Marcus Gabilheri</string>
+    <string name="developer">Developer</string>
     <plurals name="pref_inbox_accounts_summary_template">
         <item quantity="one">%1$d of %2$d account selected</item>
         <item quantity="other">%1$d of %2$d accounts selected</item>

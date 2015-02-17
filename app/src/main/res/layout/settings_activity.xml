@@ -14,13 +14,19 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:paddingLeft="16dip"
+        android:paddingStart="16dip"
+        android:paddingRight="16dip"
+        android:paddingEnd="16dip"
+        android:paddingBottom="16dip"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="Developer"
+            android:text="@string/developer"
+            android:textColor="@color/abc_secondary_text_material_light"
             android:textAppearance="?android:textAppearanceLarge"
             android:textStyle="bold"
             android:layout_width="match_parent"
@@ -29,14 +35,78 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="@color/primary_dark_material_dark"
+            android:background="@color/secondary_text_disabled_material_light"
             />
 
         <LinearLayout
+            android:padding="16dip"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/developer_image"
+                android:src="@drawable/dev_profile"
+                android:layout_width="80dip"
+                android:layout_height="80dip" />
+
+            <LinearLayout
+                android:layout_marginLeft="16dip"
+                android:layout_marginStart="16dip"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:text="@string/dev_name"
+                    android:textSize="18sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/dev_gplus"
+                        android:src="@drawable/ic_google_plus"
+                        android:layout_width="45dip"
+                        android:layout_height="45dip"
+                        android:layout_marginEnd="10dip"
+                        android:layout_marginRight="10dip"
+                    />
+
+                    <ImageView
+                        android:id="@+id/dev_in"
+                        android:src="@drawable/ic_linked_in"
+                        android:layout_width="45dip"
+                        android:layout_height="45dip"
+                        android:layout_marginEnd="10dip"
+                        android:layout_marginRight="10dip"
+                        />
+
+                    <ImageView
+                        android:id="@+id/dev_git"
+                        android:src="@drawable/ic_github"
+                        android:layout_width="45dip"
+                        android:layout_height="45dip"
+                        android:layout_marginEnd="10dip"
+                        android:layout_marginRight="10dip"
+                        />
+
+                    <ImageView
+                        android:id="@+id/dev_web"
+                        android:src="@drawable/ic_link"
+                        android:layout_width="45dip"
+                        android:layout_height="45dip"
+                        android:layout_marginEnd="10dip"
+                        android:layout_marginRight="10dip"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
