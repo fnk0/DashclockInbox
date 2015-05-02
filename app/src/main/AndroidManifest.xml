@@ -5,8 +5,11 @@
     <!-- Gmail permissions -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.gm.permission.READ_CONTENT_PROVIDER" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
+        android:name=".InboxDashClockApp"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
@@ -40,6 +43,9 @@
             android:exported="true"
             />
 
-    </application>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="0f1bbd3b27cae435eff5f9d6857577615f5b0d62" />
 
+    </application>
 </manifest>

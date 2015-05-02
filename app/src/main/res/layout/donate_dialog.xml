@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="8dp"
+    android:layout_height="match_parent">
+
+
+    <RadioGroup
+        android:id="@+id/donate_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/development"
+                android:text="Support Development"
+                android:drawablePadding="8dp"
+                android:paddingLeft="8dp"
+                android:drawableLeft="@drawable/ic_keyboard"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                />
+
+            <TextView
+                android:text="$ 0.99"
+                android:textSize="16sp"
+                android:textColor="@color/primary_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/coffee"
+                android:text="Buy me a coffee!"
+                android:drawableLeft="@drawable/ic_coffee"
+                android:drawablePadding="8dp"
+                android:paddingLeft="8dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                />
+
+            <TextView
+                android:text="$ 3.99"
+                android:textSize="16sp"
+                android:textColor="@color/primary_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <RadioButton
+                android:id="@+id/beer"
+                android:text="Buy me a beer!"
+                android:drawableLeft="@drawable/ic_beer"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                />
+
+            <TextView
+                android:text="$ 5.99"
+                android:textSize="16sp"
+                android:textColor="@color/primary_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/pizza"
+                android:text="Buy me a salad!"
+                android:drawableLeft="@drawable/ic_salad"
+                android:drawablePadding="8dp"
+                android:paddingLeft="8dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                />
+
+            <TextView
+                android:text="$ 8.99"
+                android:textSize="16sp"
+                android:textColor="@color/primary_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/dinner"
+                android:text="Take me out for dinner!"
+                android:drawablePadding="8dp"
+                android:paddingLeft="8dp"
+                android:drawableLeft="@drawable/ic_dinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                />
+
+            <TextView
+                android:text="$ 14.99"
+                android:textSize="16sp"
+                android:textColor="@color/primary_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/college"
+                android:text="Help me pay for college!"
+                android:drawablePadding="8dp"
+                android:paddingLeft="8dp"
+                android:drawableLeft="@drawable/ic_college"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                />
+
+            <TextView
+                android:text="$ 199.99"
+                android:textSize="16sp"
+                android:textColor="@color/primary_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </RadioGroup>
+</LinearLayout>

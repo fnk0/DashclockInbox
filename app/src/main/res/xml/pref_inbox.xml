@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:key="pref_inbox_label"
-        android:entryValues="@array/pref_label_inbox_values"
-        android:entries="@array/pref_inbox_label_display_names"
-        android:title="@string/pref_gmail_label_title"
-        android:defaultValue="i"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+    <!--<ListPreference-->
+        <!--android:key="pref_inbox_label"-->
+        <!--android:entryValues="@array/pref_label_inbox_values"-->
+        <!--android:entries="@array/pref_inbox_label_display_names"-->
+        <!--android:title="@string/pref_gmail_label_title"-->
+        <!--android:defaultValue="i"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
 
     <SwitchPreference
         android:key="pref_show_all"
@@ -29,6 +29,12 @@
         android:title="Hides unread count for promotions"
         android:defaultValue="true"
         android:summary='If selected this will not display the count for "Promotions" emails'
+        />
+
+    <Preference
+        android:key="donate"
+        android:title="Donate"
+        android:icon="@drawable/ic_action_favorite"
         />
 
 </PreferenceScreen>

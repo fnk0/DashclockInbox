@@ -168,7 +168,7 @@ public class InboxExtension extends DashClockExtension {
                     if(!isPromo) {
                         accountUnread += thisUnread;
                     } else {
-                        if(!sp.getBoolean(PREF_PROMOS, false)) {
+                        if(!sp.getBoolean(PREF_PROMOS, true)) {
                             accountUnread += thisUnread;
                         }
                     }
@@ -209,23 +209,32 @@ public class InboxExtension extends DashClockExtension {
             }
 
             if(unreadUpdate > 0) {
-                body.append("\n");
+                if(unreadPersonal > 0) {
+                    body.append("\n");
+                }
                 body.append(labelUpdate + " (" + unreadUpdate + ")");
             }
 
             if(unreadSocial > 0) {
-                body.append("\n");
+                if(unreadPersonal > 0|| unreadUpdate > 0) {
+                    body.append("\n");
+                }
+
                 body.append(labelSocial + " (" + unreadSocial + ")");
             }
 
             if(unreadForums > 0) {
-                body.append("\n");
+                if(unreadPersonal > 0|| unreadUpdate > 0 || unreadSocial > 0) {
+                    body.append("\n");
+                }
                 body.append(labelForums + " (" + unreadForums + ")");
             }
 
-            if(!sp.getBoolean(PREF_PROMOS, false)) {
+            if(!sp.getBoolean(PREF_PROMOS, true)) {
                 if(unreadPromos > 0) {
-                    body.append("\n");
+                    if(unreadPersonal > 0|| unreadUpdate > 0 || unreadSocial > 0 || unreadForums > 0) {
+                        body.append("\n");
+                    }
                     body.append(labelPromo + " (" + unreadPromos + ")");
                 }
             }
@@ -233,7 +242,9 @@ public class InboxExtension extends DashClockExtension {
             int otherCount = unread - (unreadForums + unreadPersonal + unreadPromos + unreadSocial + unreadUpdate);
 
             if(otherCount > 0) {
-                body.append("\n");
+                if(unreadPersonal > 0|| unreadUpdate > 0 || unreadSocial > 0 || unreadForums > 0 || unreadPromos > 0) {
+                    body.append("\n");
+                }
                 body.append("Others (" + otherCount + ")");
             }
 

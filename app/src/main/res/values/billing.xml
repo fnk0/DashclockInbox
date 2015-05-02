@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuVzW2EaxGvwBzvqlwcRzfjWGBrFPJ4LewqigdtkP676jgtztBB5JoSqpq0FKDFcv2qNL30Lob0cUtvPpVXUdqZfqllbRYRc9D872FENzdZp4gtAXkh4KsWLbtIFJ+zpo5H+ZlyCTuQAqb+cIUdzG3fZyJtTZL3idKIpjrOpy4woOCnpBEMomEjTCdMZ2Kw22EiUO8TuGaI5CHECCNRnw/KPGbIl36Bq2xd5zdPypGuUX/+seqMW9nIseStKebFlb83PitERSJX7lK/KqJHiyDsMPdmioi0xMqrEIdBKp0PP0vBDYV8SUE671c/x6mKSF/gh3zbXNpzNo7dyn4iaq2wIDAQAB</string>
+    <string name="coffee">coffee</string>
+    <string name="college">college</string>
+    <string name="beer">beer</string>
+    <string name="encourage_development">encourage_development</string>
+    <string name="dinner">dinner</string>
+    <string name="pizza">pizza</string>
+</resources>

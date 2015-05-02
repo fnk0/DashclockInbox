@@ -1,4 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 android {
     compileSdkVersion 22
@@ -8,7 +25,7 @@ android {
         applicationId "gabilheri.com.inboxdashclock"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 4
+        versionCode 6
         versionName "1.1"
     }
 
@@ -30,4 +47,12 @@ dependencies {
     compile 'com.google.android.apps.dashclock:dashclock-api:2.0.0'
     compile 'de.hdodenhof:circleimageview:1.2.0'
 
+    // Billing
+    compile 'com.anjlab.android.iab.v3:library:1.0.+@aar'
+
+    compile 'com.afollestad:material-dialogs:0.7.1.2'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
+        transitive = true;
+    }
 }

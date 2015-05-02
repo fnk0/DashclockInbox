@@ -29,9 +29,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.TransactionDetails;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class InboxSettingsActivity extends AppCompatActivity implements View.OnClickListener{
@@ -96,14 +105,28 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
         startActivity(intent);
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragment implements BillingProcessor.IBillingHandler{
+
+        BillingProcessor billingProcessor;
+        String billingID = null;
+        MaterialDialog donateDialog;
+        List<String> products;
 
         @Override
         public void onCreate(Bundle paramBundle) {
             super.onCreate(paramBundle);
-
+            billingProcessor = new BillingProcessor(getActivity(), getString(R.string.billing_key), this);
             addPreferencesFromResource(R.xml.pref_inbox);
             addAccountsPreference();
+
+            findPreference("donate").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    showDonateDialog();
+                    return true;
+                }
+            });
+
         }
 
         private void addAccountsPreference() {
@@ -148,5 +171,146 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
                             .getDefaultSharedPreferences(getActivity())
                             .getStringSet(accountsPreference.getKey(), allAccountsSet));
         }
+
+        @Override
+        public void onProductPurchased(String purchaseId, TransactionDetails transactionDetails) {
+            if(donateDialog != null) {
+                if(donateDialog.isShowing()) {
+                    donateDialog.dismiss();
+                }
+            }
+            boolean purchased = false;
+
+            for(String s : products) {
+                if(s.equals(purchaseId)) {
+                    purchased = true;
+                    Toast.makeText(getActivity(), "You can only buy this item once!", Toast.LENGTH_LONG).show();
+                }
+            }
+            if(!purchased) {
+                Toast.makeText(getActivity(), "Thank you!! You rock!", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onPurchaseHistoryRestored() {
+
+        }
+
+        @Override
+        public void onBillingError(int i, Throwable throwable) {
+            if(donateDialog != null) {
+                if(donateDialog.isShowing()) {
+                    donateDialog.dismiss();
+                }
+            }
+            new MaterialDialog.Builder(getActivity())
+                    .title("Error")
+                    .content("An error occurred while processing your purchase.")
+                    .positiveText("Dismiss")
+                    .positiveColor(getResources().getColor(R.color.accent_color))
+                    .build()
+                    .show();
+        }
+
+        @Override
+        public void onBillingInitialized() {
+
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+
+        public void showDonateDialog() {
+            donateDialog = new MaterialDialog.Builder(getActivity())
+                    .title("Donate")
+                    .icon(getResources().getDrawable(R.drawable.ic_donate_cart))
+                    .customView(R.layout.donate_dialog, true)
+                    .negativeText("Cancel")
+                    .negativeColor(getResources().getColor(R.color.accent_color))
+                    .positiveText("Donate")
+                    .positiveColor(getResources().getColor(R.color.primary_dark))
+                    .build();
+
+            View v = donateDialog.getCustomView();
+
+            if(v != null) {
+                RadioButton support = (RadioButton) v.findViewById(R.id.development);
+                RadioButton coffee = (RadioButton) v.findViewById(R.id.coffee);
+                RadioButton beer = (RadioButton) v.findViewById(R.id.beer);
+                RadioButton pizza = (RadioButton) v.findViewById(R.id.pizza);
+                RadioButton dinner = (RadioButton) v.findViewById(R.id.dinner);
+                RadioButton college = (RadioButton) v.findViewById(R.id.college);
+
+                final ArrayList<RadioButton> buttons = new ArrayList<>();
+                buttons.add(support);
+                buttons.add(coffee);
+                buttons.add(beer);
+                buttons.add(pizza);
+                buttons.add(dinner);
+                buttons.add(college);
+                products =  billingProcessor.listOwnedProducts();
+                for(RadioButton rb : buttons) {
+                    rb.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            for(RadioButton r : buttons) {
+                                r.setChecked(false);
+                            }
+                            ((RadioButton)v).setChecked(true);
+                            billingID = getBillingId(v.getId());
+                        }
+                    });
+                }
+
+                View positive = donateDialog.getActionButton(DialogAction.POSITIVE);
+                positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (billingID != null) {
+//                            Log.d(LOG_TAG, "Purchasing... " + billingID);
+                                billingProcessor.purchase(getActivity(), billingID);
+                        }
+                    }
+                });
+            }
+
+            donateDialog.show();
+        }
+
+        public String getBillingId(int id) {
+            switch (id) {
+                case R.id.development:
+                    return getResources().getString(R.string.encourage_development);
+                case R.id.coffee:
+                    return getResources().getString(R.string.coffee);
+                case R.id.beer:
+                    return getResources().getString(R.string.beer);
+                case R.id.pizza:
+                    return getResources().getString(R.string.pizza);
+                case R.id.dinner:
+                    return getResources().getString(R.string.dinner);
+                case R.id.college:
+                    return getResources().getString(R.string.college);
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            if(billingProcessor != null) {
+                billingProcessor.release();
+            }
+        }
+
+
+
     }
+
 }
