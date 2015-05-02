@@ -12,11 +12,11 @@
     </plurals>
 
     <string name="pref_gmail_label_title">Show unread count for label</string>
-    <string-array name="pref_gmail_label_display_names">
+    <string-array name="pref_inbox_label_display_names">
         <item>Inbox</item>
         <item>Priority Inbox</item>
     </string-array>
-    <string-array name="pref_gmail_label_inbox_values" translatable="false">
+    <string-array name="pref_label_inbox_values" translatable="false">
         <item>i</item>
         <item>p</item>
     </string-array>

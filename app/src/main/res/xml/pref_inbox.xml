@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="pref_inbox_label"
+        android:entryValues="@array/pref_label_inbox_values"
+        android:entries="@array/pref_inbox_label_display_names"
+        android:title="@string/pref_gmail_label_title"
+        android:defaultValue="i"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <SwitchPreference
+        android:key="pref_show_all"
+        android:title="Show all label counts"
+        android:defaultValue="true"
+        android:summary="Shows the unread count for Primary, Updates, Social, Forums and Promos separatelly"
+    />
+
+    <SwitchPreference
+        android:key="pref_show_accounts"
+        android:title="Show individual accounts"
+        android:defaultValue="true"
+        android:summary="Shows the name of each account among it's individual unread count"
+        />
+
+    <SwitchPreference
+        android:key="pref_promos"
+        android:title="Hides unread count for promotions"
+        android:defaultValue="true"
+        android:summary='If selected this will not display the count for "Promotions" emails'
+        />
+
+</PreferenceScreen>

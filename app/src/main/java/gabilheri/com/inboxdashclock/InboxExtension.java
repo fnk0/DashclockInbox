@@ -46,6 +46,9 @@ public class InboxExtension extends DashClockExtension {
 
     public static final String PREF_ACCOUNTS = "pref_inbox_accounts";
     public static final String PREF_LABEL = "pref_inbox_label";
+    public static final String PREF_ALL = "pref_show_all";
+    public static final String PREF_PROMOS = "pref_promos";
+    public static final String PREF_SHOW_ACCOUNT = "pref_show_accounts";
 
     private static final String ACCOUNT_TYPE_GOOGLE = "com.google";
 
@@ -102,13 +105,25 @@ public class InboxExtension extends DashClockExtension {
         }
 
         int unread = 0;
+        int unreadUpdate = 0;
+        String labelUpdate = "";
+        int unreadSocial = 0;
+        String labelSocial = "";
+        int unreadForums = 0;
+        String labelForums = "";
+        int unreadPersonal = 0;
+        String labelPersonal = "";
+
+        int unreadPromos = 0;
+        String labelPromo = "";
+
         List<Pair<String, Integer>> unreadPerAccount = new ArrayList<Pair<String, Integer>>();
         String lastUnreadLabelUri = null;
 
         for (String account : selectedAccounts) {
             Cursor cursor = tryOpenLabelsCursor(account);
             if (cursor == null || cursor.isAfterLast()) {
-                Log.i(TAG, "No Gmail inbox information found for account.");
+                Log.i(TAG, "No Inbox information found for account.");
                 if (cursor != null) {
                     cursor.close();
                 }
@@ -118,19 +133,46 @@ public class InboxExtension extends DashClockExtension {
             int accountUnread = 0;
 
             while (cursor.moveToNext()) {
-                int thisUnread = cursor.getInt(LabelsQuery.NUM_UNREAD_CONVERSATIONS);
                 String thisCanonicalName = cursor.getString(LabelsQuery.CANONICAL_NAME);
+                String name = cursor.getString(3);
+                boolean isPromo = false;
+                int thisUnread = cursor.getInt(LabelsQuery.NUM_UNREAD_CONVERSATIONS);
+//                Log.d(TAG, "Canonical: " + thisCanonicalName + " -- Name: " + name);
+
+                if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_GROUP)) {
+                    unreadForums = thisUnread;
+                    labelForums = name;
+                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_UPDATES)) {
+                    unreadUpdate = thisUnread;
+                    labelUpdate = name;
+                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PERSONAL)) {
+                    unreadPersonal = thisUnread;
+                    labelPersonal = name;
+                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_SOCIAL)) {
+                    unreadSocial = thisUnread;
+                    labelSocial = name;
+                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PROMO)) {
+                    unreadPromos = thisUnread;
+                    labelPromo = name;
+                    isPromo = true;
+//                    Log.d(TAG, "Found promos!! " + unreadPromos);
+                }
+
                 if (labelCanonical.equals(thisCanonicalName)) {
-                    accountUnread = thisUnread;
                     if (thisUnread > 0) {
                         lastUnreadLabelUri = cursor.getString(LabelsQuery.URI);
                     }
                     break;
                 } else if (!TextUtils.isEmpty(thisCanonicalName)
                         && thisCanonicalName.startsWith(SECTIONED_INBOX_CANONICAL_NAME_PREFIX)) {
-                    accountUnread += thisUnread;
-                    if (thisUnread > 0
-                            && SECTIONED_INBOX_CANONICAL_NAME_PERSONAL.equals(thisCanonicalName)) {
+                    if(!isPromo) {
+                        accountUnread += thisUnread;
+                    } else {
+                        if(!sp.getBoolean(PREF_PROMOS, false)) {
+                            accountUnread += thisUnread;
+                        }
+                    }
+                    if (thisUnread > 0 && SECTIONED_INBOX_CANONICAL_NAME_PERSONAL.equals(thisCanonicalName)) {
                         lastUnreadLabelUri = cursor.getString(LabelsQuery.URI);
                     }
                 }
@@ -145,26 +187,65 @@ public class InboxExtension extends DashClockExtension {
         }
 
         StringBuilder body = new StringBuilder();
-        for (Pair<String, Integer> pair : unreadPerAccount) {
-            if (pair.second == 0) {
-                continue;
-            }
+        if(sp.getBoolean(PREF_SHOW_ACCOUNT, true)) {
+            for (Pair<String, Integer> pair : unreadPerAccount) {
+                if (pair.second == 0) {
+                    continue;
+                }
 
-            if (body.length() > 0) {
-                body.append("\n");
+                if (body.length() > 0) {
+                    body.append("\n");
+                }
+                body.append(pair.first).append(" (").append(pair.second).append(")");
+                if(sp.getBoolean(PREF_ALL, true)) {
+                    body.append("\n");
+                }
             }
-            body.append(pair.first).append(" (").append(pair.second).append(")");
         }
 
+        if(sp.getBoolean(PREF_ALL, true)) {
+            if(unreadPersonal > 0) {
+                body.append(labelPersonal + " (" + unreadPersonal + ")");
+            }
+
+            if(unreadUpdate > 0) {
+                body.append("\n");
+                body.append(labelUpdate + " (" + unreadUpdate + ")");
+            }
+
+            if(unreadSocial > 0) {
+                body.append("\n");
+                body.append(labelSocial + " (" + unreadSocial + ")");
+            }
+
+            if(unreadForums > 0) {
+                body.append("\n");
+                body.append(labelForums + " (" + unreadForums + ")");
+            }
+
+            if(!sp.getBoolean(PREF_PROMOS, false)) {
+                if(unreadPromos > 0) {
+                    body.append("\n");
+                    body.append(labelPromo + " (" + unreadPromos + ")");
+                }
+            }
+
+            int otherCount = unread - (unreadForums + unreadPersonal + unreadPromos + unreadSocial + unreadUpdate);
+
+            if(otherCount > 0) {
+                body.append("\n");
+                body.append("Others (" + otherCount + ")");
+            }
+
+        }
 
         Intent clickIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.inbox");
 
         publishUpdate(new ExtensionData()
                 .visible(unread > 0)
                 .status(Integer.toString(unread))
-                .expandedTitle(getResources().getQuantityString(
-                        R.plurals.inbox_title_template, unread, unread))
-                .icon(R.drawable.ic_inbox)
+                .expandedTitle(getResources().getQuantityString(R.plurals.inbox_title_template, unread, unread))
+                .icon(R.drawable.ic_inbox_logo)
                 .expandedBody(body.toString())
                 .clickIntent(clickIntent));
     }
@@ -182,7 +263,7 @@ public class InboxExtension extends DashClockExtension {
             // From developer console: "Permission Denial: opening provider com.google.android.gsf..
             // From developer console: "SQLiteException: no such table: labels"
             // From developer console: "NullPointerException"
-            Log.e(TAG, "Error opening Gmail labels", e);
+            Log.e(TAG, "Error opening Inbox labels", e);
             return null;
         }
     }
@@ -192,6 +273,7 @@ public class InboxExtension extends DashClockExtension {
                 InboxContract.Labels.NUM_UNREAD_CONVERSATIONS,
                 InboxContract.Labels.URI,
                 InboxContract.Labels.CANONICAL_NAME,
+                InboxContract.Labels.NAME,
         };
 
         int NUM_UNREAD_CONVERSATIONS = 0;

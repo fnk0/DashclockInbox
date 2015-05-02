@@ -16,8 +16,7 @@ public final class InboxContract {
     /**
      * Permission required to access this {@link android.content.ContentProvider}
      */
-    public static final String PERMISSION =
-            "com.google.android.gm.permission.READ_CONTENT_PROVIDER";
+    public static final String PERMISSION = "com.google.android.gm.permission.READ_CONTENT_PROVIDER";
 
     /**
      * Authority for the Gmail content provider.
@@ -117,6 +116,16 @@ public final class InboxContract {
              * Canonical name for the Trash label
              */
             public static final String CANONICAL_NAME_TRASH = "^k";
+
+            public static final String CANONICAL_NAME_PROMO = "^sq_ig_i_promo";
+
+            public static final String CANONICAL_NAME_SOCIAL = "^sq_ig_i_social";
+
+            public static final String CANONICAL_NAME_PERSONAL = "^sq_ig_i_personal";
+
+            public static final String CANONICAL_NAME_GROUP = "^sq_ig_i_group";
+
+            public static final String CANONICAL_NAME_UPDATES = "^sq_ig_i_notification";
 
             private LabelCanonicalNames() {}
         }

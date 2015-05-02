@@ -25,7 +25,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InboxSettingsActivity extends ActionBarActivity implements View.OnClickListener{
+public class InboxSettingsActivity extends AppCompatActivity implements View.OnClickListener{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -102,7 +102,7 @@ public class InboxSettingsActivity extends ActionBarActivity implements View.OnC
         public void onCreate(Bundle paramBundle) {
             super.onCreate(paramBundle);
 
-            addPreferencesFromResource(R.xml.pref_gmail);
+            addPreferencesFromResource(R.xml.pref_inbox);
             addAccountsPreference();
         }
 
