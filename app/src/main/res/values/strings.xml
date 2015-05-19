@@ -28,4 +28,14 @@
         <item quantity="one">%1$d of %2$d account selected</item>
         <item quantity="other">%1$d of %2$d accounts selected</item>
     </plurals>
+
+    <string name="hide_labels">Hide Labels</string>
+    <string name="labels_summary">Selected labels to hide from the widget.</string>
+    <string-array name="labels_preferences">
+        <item>Updates</item>
+        <item>Social</item>
+        <item>Forums</item>
+        <item>Promos</item>
+    </string-array>
+
 </resources>

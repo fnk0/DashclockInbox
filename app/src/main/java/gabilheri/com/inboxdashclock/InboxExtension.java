@@ -50,6 +50,13 @@ public class InboxExtension extends DashClockExtension {
     public static final String PREF_PROMOS = "pref_promos";
     public static final String PREF_SHOW_ACCOUNT = "pref_show_accounts";
 
+    public static final String LABEL_UPDATES = "Updates";
+    public static final String LABEL_SOCIAL = "Social";
+    public static final String LABEL_FORUMS = "Forums";
+    public static final String LABEL_PROMOS = "Promos";
+
+    public static final String HIDE_LABELS = "hide_labels";
+
     private static final String ACCOUNT_TYPE_GOOGLE = "com.google";
 
     private static final String SECTIONED_INBOX_CANONICAL_NAME_PREFIX = "^sq_ig_i_";
@@ -104,6 +111,12 @@ public class InboxExtension extends DashClockExtension {
             labelCanonical = InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PRIORITY_INBOX;
         }
 
+        Set<String> selectedLabels = sp.getStringSet(HIDE_LABELS, new HashSet<String>());
+
+        for(String s : selectedLabels) {
+            Log.d(TAG, "Label: " + s);
+        }
+
         int unread = 0;
         int unreadUpdate = 0;
         String labelUpdate = "";
@@ -135,7 +148,6 @@ public class InboxExtension extends DashClockExtension {
             while (cursor.moveToNext()) {
                 String thisCanonicalName = cursor.getString(LabelsQuery.CANONICAL_NAME);
                 String name = cursor.getString(3);
-                boolean isPromo = false;
                 int thisUnread = cursor.getInt(LabelsQuery.NUM_UNREAD_CONVERSATIONS);
 //                Log.d(TAG, "Canonical: " + thisCanonicalName + " -- Name: " + name);
 
@@ -154,7 +166,6 @@ public class InboxExtension extends DashClockExtension {
                 } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PROMO)) {
                     unreadPromos = thisUnread;
                     labelPromo = name;
-                    isPromo = true;
 //                    Log.d(TAG, "Found promos!! " + unreadPromos);
                 }
 
@@ -165,13 +176,7 @@ public class InboxExtension extends DashClockExtension {
                     break;
                 } else if (!TextUtils.isEmpty(thisCanonicalName)
                         && thisCanonicalName.startsWith(SECTIONED_INBOX_CANONICAL_NAME_PREFIX)) {
-                    if(!isPromo) {
-                        accountUnread += thisUnread;
-                    } else {
-                        if(!sp.getBoolean(PREF_PROMOS, true)) {
-                            accountUnread += thisUnread;
-                        }
-                    }
+                    accountUnread += thisUnread;
                     if (thisUnread > 0 && SECTIONED_INBOX_CANONICAL_NAME_PERSONAL.equals(thisCanonicalName)) {
                         lastUnreadLabelUri = cursor.getString(LabelsQuery.URI);
                     }
@@ -203,51 +208,65 @@ public class InboxExtension extends DashClockExtension {
             }
         }
 
+        boolean hasUpdates = false;
+        boolean hasSocial = false;
+        boolean hasForums = false;
+
         if(sp.getBoolean(PREF_ALL, true)) {
             if(unreadPersonal > 0) {
-                body.append(labelPersonal + " (" + unreadPersonal + ")");
+                body.append(labelPersonal).append(" (").append(unreadPersonal).append(")");
             }
 
-            if(unreadUpdate > 0) {
-                if(unreadPersonal > 0) {
-                    body.append("\n");
-                }
-                body.append(labelUpdate + " (" + unreadUpdate + ")");
-            }
-
-            if(unreadSocial > 0) {
-                if(unreadPersonal > 0|| unreadUpdate > 0) {
-                    body.append("\n");
-                }
-
-                body.append(labelSocial + " (" + unreadSocial + ")");
-            }
-
-            if(unreadForums > 0) {
-                if(unreadPersonal > 0|| unreadUpdate > 0 || unreadSocial > 0) {
-                    body.append("\n");
-                }
-                body.append(labelForums + " (" + unreadForums + ")");
-            }
-
-            if(!sp.getBoolean(PREF_PROMOS, true)) {
-                if(unreadPromos > 0) {
-                    if(unreadPersonal > 0|| unreadUpdate > 0 || unreadSocial > 0 || unreadForums > 0) {
+            if(!selectedLabels.contains(LABEL_UPDATES)) {
+                if(unreadUpdate > 0) {
+                    if(unreadPersonal > 0) {
                         body.append("\n");
                     }
-                    body.append(labelPromo + " (" + unreadPromos + ")");
+                    hasUpdates = true;
+                    body.append(labelUpdate).append(" (").append(unreadUpdate).append(")");
                 }
+            } else {
+                Log.d(TAG, "Updates should be hidden");
+                unread -= unreadUpdate;
             }
 
-            int otherCount = unread - (unreadForums + unreadPersonal + unreadPromos + unreadSocial + unreadUpdate);
-
-            if(otherCount > 0) {
-                if(unreadPersonal > 0|| unreadUpdate > 0 || unreadSocial > 0 || unreadForums > 0 || unreadPromos > 0) {
-                    body.append("\n");
+            if(!selectedLabels.contains(LABEL_SOCIAL)) {
+                if(unreadSocial > 0) {
+                    if(unreadPersonal > 0|| hasUpdates) {
+                        body.append("\n");
+                    }
+                    hasSocial = true;
+                    body.append(labelSocial).append(" (").append(unreadSocial).append(")");
                 }
-                body.append("Others (" + otherCount + ")");
+            } else {
+                Log.d(TAG, "Social should be hidden");
+                unread -= unreadSocial;
             }
 
+            if(!selectedLabels.contains(LABEL_FORUMS)) {
+                if(unreadForums > 0) {
+                    if(unreadPersonal > 0|| hasUpdates || hasSocial) {
+                        body.append("\n");
+                    }
+                    hasForums = true;
+                    body.append(labelForums).append(" (").append(unreadForums).append(")");
+                }
+            } else {
+                Log.d(TAG, "Forums should be hidden");
+                unread -= unreadForums;
+            }
+
+            if(!selectedLabels.contains(LABEL_PROMOS)) {
+                if(unreadPromos > 0) {
+                    if(unreadPersonal > 0|| hasUpdates || hasSocial || hasForums) {
+                        body.append("\n");
+                    }
+                    body.append(labelPromo).append(" (").append(unreadPromos).append(")");
+                }
+            } else {
+                Log.d(TAG, "Promos should be hidden");
+                unread -= unreadPromos;
+            }
         }
 
         Intent clickIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.inbox");

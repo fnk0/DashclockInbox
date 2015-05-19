@@ -65,8 +65,10 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
 
         // use action bar here
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         ImageView devGPlus = (ImageView) findViewById(R.id.dev_gplus);
         ImageView devGit = (ImageView) findViewById(R.id.dev_git);
@@ -142,8 +144,7 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
             accountsPreference.setDefaultValue(allAccountsSet);
             getPreferenceScreen().addPreference(accountsPreference);
 
-            Preference.OnPreferenceChangeListener accountsChangeListener
-                    = new Preference.OnPreferenceChangeListener() {
+            Preference.OnPreferenceChangeListener accountsChangeListener = new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     int numSelected = 0;
@@ -155,8 +156,7 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
                         if (selectedAccounts != null) {
                             numSelected = selectedAccounts.size();
                         }
-                    } catch (ClassCastException ignored) {
-                    }
+                    } catch (ClassCastException ignored) {}
 
                     preference.setSummary(getResources().getQuantityString(
                             R.plurals.pref_inbox_accounts_summary_template,

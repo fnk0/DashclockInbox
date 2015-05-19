@@ -14,7 +14,7 @@
         android:key="pref_show_all"
         android:title="Show all label counts"
         android:defaultValue="true"
-        android:summary="Shows the unread count for Primary, Updates, Social, Forums and Promos separatelly"
+        android:summary="Shows the unread count for Primary, Updates, Social, Forums and Promos separately"
     />
 
     <SwitchPreference
@@ -22,14 +22,23 @@
         android:title="Show individual accounts"
         android:defaultValue="true"
         android:summary="Shows the name of each account among it's individual unread count"
-        />
+    />
 
-    <SwitchPreference
-        android:key="pref_promos"
-        android:title="Hides unread count for promotions"
-        android:defaultValue="true"
-        android:summary='If selected this will not display the count for "Promotions" emails'
-        />
+    <com.afollestad.materialdialogs.prefs.MaterialMultiSelectListPreference
+        android:key="hide_labels"
+        android:entries="@array/labels_preferences"
+        android:entryValues="@array/labels_preferences"
+        android:title="@string/hide_labels"
+        android:summary="@string/labels_summary"
+        android:persistent="true"
+        android:layout="@layout/preference_custom" />
+
+    <!--<SwitchPreference-->
+        <!--android:key="pref_promos"-->
+        <!--android:title="Hides unread count for promotions"-->
+        <!--android:defaultValue="true"-->
+        <!--android:summary='If selected this will not display the count for "Promotions" emails'-->
+        <!--/>-->
 
     <Preference
         android:key="donate"

@@ -25,8 +25,8 @@ android {
         applicationId "gabilheri.com.inboxdashclock"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 6
-        versionName "1.1"
+        versionCode 7
+        versionName "1.2"
     }
 
     compileOptions {
@@ -34,8 +34,16 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
