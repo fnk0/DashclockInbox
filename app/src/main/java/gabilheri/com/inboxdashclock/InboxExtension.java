@@ -1,21 +1,4 @@
-/*
- * Copyright 2013 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package gabilheri.com.inboxdashclock;
-
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -47,13 +30,13 @@ public class InboxExtension extends DashClockExtension {
     public static final String PREF_ACCOUNTS = "pref_inbox_accounts";
     public static final String PREF_LABEL = "pref_inbox_label";
     public static final String PREF_ALL = "pref_show_all";
-    public static final String PREF_PROMOS = "pref_promos";
     public static final String PREF_SHOW_ACCOUNT = "pref_show_accounts";
 
     public static final String LABEL_UPDATES = "Updates";
     public static final String LABEL_SOCIAL = "Social";
     public static final String LABEL_FORUMS = "Forums";
     public static final String LABEL_PROMOS = "Promos";
+    public static final String LABEL_UNREAD = "Unread";
 
     public static final String HIDE_LABELS = "hide_labels";
 
@@ -94,7 +77,6 @@ public class InboxExtension extends DashClockExtension {
                 uris[i++] = InboxContract.Labels.getLabelsUri(account).toString();
                 // TODO: only watch the individual label's URI (GmailContract.Labels.URI)
             }
-
             addWatchContentUris(uris);
         }
     }
@@ -102,14 +84,7 @@ public class InboxExtension extends DashClockExtension {
     @Override
     protected void onUpdateData(int reason) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String labelCanonical = sp.getString(PREF_LABEL, "i");
         Set<String> selectedAccounts = getSelectedAccounts();
-
-        if ("i".equals(labelCanonical)) {
-            labelCanonical = InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_INBOX;
-        } else if ("p".equals(labelCanonical)) {
-            labelCanonical = InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PRIORITY_INBOX;
-        }
 
         Set<String> selectedLabels = sp.getStringSet(HIDE_LABELS, new HashSet<String>());
 
@@ -130,8 +105,9 @@ public class InboxExtension extends DashClockExtension {
         int unreadPromos = 0;
         String labelPromo = "";
 
+        int otherUnread = 0;
+
         List<Pair<String, Integer>> unreadPerAccount = new ArrayList<Pair<String, Integer>>();
-        String lastUnreadLabelUri = null;
 
         for (String account : selectedAccounts) {
             Cursor cursor = tryOpenLabelsCursor(account);
@@ -145,47 +121,56 @@ public class InboxExtension extends DashClockExtension {
 
             int accountUnread = 0;
 
+            boolean hasLabels = false;
+
             while (cursor.moveToNext()) {
                 String thisCanonicalName = cursor.getString(LabelsQuery.CANONICAL_NAME);
-                String name = cursor.getString(3);
+                String name = cursor.getString(cursor.getColumnIndex(InboxContract.Labels.NAME));
                 int thisUnread = cursor.getInt(LabelsQuery.NUM_UNREAD_CONVERSATIONS);
-//                Log.d(TAG, "Canonical: " + thisCanonicalName + " -- Name: " + name);
-
-                if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_GROUP)) {
-                    unreadForums = thisUnread;
-                    labelForums = name;
-                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_UPDATES)) {
-                    unreadUpdate = thisUnread;
-                    labelUpdate = name;
-                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PERSONAL)) {
-                    unreadPersonal = thisUnread;
-                    labelPersonal = name;
-                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_SOCIAL)) {
-                    unreadSocial = thisUnread;
-                    labelSocial = name;
-                } else if(thisCanonicalName.equals(InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PROMO)) {
-                    unreadPromos = thisUnread;
-                    labelPromo = name;
-//                    Log.d(TAG, "Found promos!! " + unreadPromos);
+                switch (thisCanonicalName) {
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_GROUP:
+                        unreadForums = thisUnread;
+                        labelForums = name;
+                        hasLabels = true;
+                        break;
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_UPDATES:
+                        unreadUpdate = thisUnread;
+                        labelUpdate = name;
+                        hasLabels = true;
+                        break;
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PERSONAL:
+                        unreadPersonal = thisUnread;
+                        labelPersonal = name;
+                        hasLabels = true;
+                        break;
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_SOCIAL:
+                        unreadSocial = thisUnread;
+                        labelSocial = name;
+                        hasLabels = true;
+                        break;
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PROMO:
+                        unreadPromos = thisUnread;
+                        labelPromo = name;
+                        hasLabels = true;
+                        break;
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_INBOX:
+                    case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PRIORITY_INBOX:
+                        otherUnread += thisUnread;
+                        break;
                 }
 
-                if (labelCanonical.equals(thisCanonicalName)) {
-                    if (thisUnread > 0) {
-                        lastUnreadLabelUri = cursor.getString(LabelsQuery.URI);
-                    }
-                    break;
-                } else if (!TextUtils.isEmpty(thisCanonicalName)
-                        && thisCanonicalName.startsWith(SECTIONED_INBOX_CANONICAL_NAME_PREFIX)) {
+                if (!TextUtils.isEmpty(thisCanonicalName) && thisCanonicalName.startsWith(SECTIONED_INBOX_CANONICAL_NAME_PREFIX)) {
                     accountUnread += thisUnread;
-                    if (thisUnread > 0 && SECTIONED_INBOX_CANONICAL_NAME_PERSONAL.equals(thisCanonicalName)) {
-                        lastUnreadLabelUri = cursor.getString(LabelsQuery.URI);
-                    }
                 }
             }
 
             if (accountUnread > 0) {
-                unreadPerAccount.add(new Pair<String, Integer>(account, accountUnread));
+                unreadPerAccount.add(new Pair<>(account, accountUnread));
                 unread += accountUnread;
+            }
+
+            if(!hasLabels && otherUnread > 0) {
+                unread = otherUnread;
             }
 
             cursor.close();
@@ -197,7 +182,6 @@ public class InboxExtension extends DashClockExtension {
                 if (pair.second == 0) {
                     continue;
                 }
-
                 if (body.length() > 0) {
                     body.append("\n");
                 }
@@ -279,6 +263,9 @@ public class InboxExtension extends DashClockExtension {
                 .expandedBody(body.toString())
                 .clickIntent(clickIntent));
     }
+
+
+
 
     private Cursor tryOpenLabelsCursor(String account) {
         try {

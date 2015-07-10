@@ -24,14 +24,13 @@
         android:summary="Shows the name of each account among it's individual unread count"
     />
 
-    <com.afollestad.materialdialogs.prefs.MaterialMultiSelectListPreference
+    <MultiSelectListPreference
         android:key="hide_labels"
         android:entries="@array/labels_preferences"
         android:entryValues="@array/labels_preferences"
         android:title="@string/hide_labels"
         android:summary="@string/labels_summary"
-        android:persistent="true"
-        android:layout="@layout/preference_custom" />
+         />
 
     <!--<SwitchPreference-->
         <!--android:key="pref_promos"-->

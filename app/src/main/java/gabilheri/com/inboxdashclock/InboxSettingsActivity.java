@@ -278,7 +278,6 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
                     }
                 });
             }
-
             donateDialog.show();
         }
 
@@ -308,9 +307,6 @@ public class InboxSettingsActivity extends AppCompatActivity implements View.OnC
                 billingProcessor.release();
             }
         }
-
-
-
     }
 
 }

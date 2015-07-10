@@ -25,8 +25,8 @@ android {
         applicationId "gabilheri.com.inboxdashclock"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 7
-        versionName "1.2"
+        versionCode 10
+        versionName "1.3"
     }
 
     compileOptions {
@@ -36,13 +36,13 @@ android {
     buildTypes {
 
         debug {
-            minifyEnabled true
+            minifyEnabled false
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         release {
-            minifyEnabled true
+            minifyEnabled false
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -51,14 +51,14 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.google.android.apps.dashclock:dashclock-api:2.0.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.google.android.apps.dashclock:dashclock-api:+'
     compile 'de.hdodenhof:circleimageview:1.2.0'
 
     // Billing
     compile 'com.anjlab.android.iab.v3:library:1.0.+@aar'
 
-    compile 'com.afollestad:material-dialogs:0.7.1.2'
+    compile 'com.afollestad:material-dialogs:0.7.6.0'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
         transitive = true;
