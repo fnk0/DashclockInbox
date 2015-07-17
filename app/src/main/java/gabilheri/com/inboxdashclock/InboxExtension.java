@@ -155,7 +155,9 @@ public class InboxExtension extends DashClockExtension {
                         break;
                     case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_INBOX:
                     case InboxContract.Labels.LabelCanonicalNames.CANONICAL_NAME_PRIORITY_INBOX:
-                        otherUnread += thisUnread;
+                        if(otherUnread != 0) {
+                            otherUnread += thisUnread;
+                        }
                         break;
                 }
 
